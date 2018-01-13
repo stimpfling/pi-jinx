@@ -13,8 +13,17 @@ class Player:
         fileExp = directory + "/*.mp3"
         self.audioFiles=glob.glob(fileExp)
         self.numFiles = len(self.audioFiles)
-        self.player = vlc.MediaPlayer()
         self.index = 0
+    def playRandom(self):
+        return
+    def cleanUp(self):
+        return
+
+class vlcPlayer(Player):
+
+    def __init__(self,directory):
+        Player.__init__(self,directory)
+        self.player = vlc.MediaPlayer()
 
     def playRandom(self):
         self.player = vlc.MediaPlayer(self.audioFiles[self.index])
@@ -27,42 +36,56 @@ class Player:
         self.player.release()
     def stop(self):
         self.player.stop()
+    def cleanup(self):
+        self.stop()
+        self.release()
     
-class osPlayer:
-
+class osPlayer(Player):
     def __init__(self,directory):
-        fileExp = directory + "/*.mp3"
-        self.audioFiles=glob.glob(fileExp)
-        self.numFiles = len(self.audioFiles)
-        self.index = 0
-
+        Player.__init__(self,directory)
+        self.p = subprocess
+        self.pid = -1
+        self.player = "play"
     def playRandom(self):
         FNULL = open(os.devnull, 'w')
-        print "Playing " + self.audioFiles[self.index]
-        subprocess.call( ["play",self.audioFiles[self.index]], stdout=FNULL,stderr=subprocess.STDOUT)
+        currentSong = self.audioFiles[self.index]
+        command = self.player + " " + currentSong 
+        print "Playing " + currentSong 
+        self.pid = self.p.Popen("exec " + command, stdout=FNULL,stderr=subprocess.STDOUT,shell=True)  
+        #subprocess.call( ["play",self.audioFiles[self.index]], stdout=FNULL,stderr=subprocess.STDOUT)
         self.index += 1
         if self.index >= self.numFiles:
             print "Reached the end of the files. Shuffling..."
             self.index = 0
             random.shuffle(self.audioFiles)
+    def cleanUp(self):
+        try:
+            self.pid.terminate()
+        except: 
+            return
+    def setPlayer(self,player):
+        self.player = player
+
+p = osPlayer("./audio")
 
 def setup():
     GPIO.setmode(GPIO.BOARD)       # Numbers GPIOs by physical location
     GPIO.setup(PIR_OUT_PIN, GPIO.IN)    # Set BtnPin's mode is input
 
 def destroy():
-	GPIO.cleanup()                     # Release resource
+    p.cleanUp()
+    GPIO.cleanup()                     # Release resource
 
 def loop():
-    p = osPlayer("./audio")
     while True:
         i = GPIO.input(PIR_OUT_PIN)
         if i == 0: 
+            time.sleep(.01)
             pass
         elif i == 1:
             print 'Movement detected!'
             p.playRandom()
-            time.sleep(5)
+            time.sleep(9)
             print 'Ready to play again...'
 
 if __name__ == '__main__':     # Program start from here
