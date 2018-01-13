@@ -14,6 +14,12 @@ class Player:
         self.audioFiles=glob.glob(fileExp)
         self.numFiles = len(self.audioFiles)
         self.index = 0
+    def getCurrentIndex(self):
+        if self.index >= self.numFiles:
+            self.index = 0
+            random.shuffle(self.audioFiles)
+        self.index += 1
+        return self.index
     def playRandom(self):
         return
     def cleanUp(self):
@@ -26,12 +32,12 @@ class vlcPlayer(Player):
         self.player = vlc.MediaPlayer()
 
     def playRandom(self):
-        self.player = vlc.MediaPlayer(self.audioFiles[self.index])
+        index = self.getCurrentIndex()
+        currentSong = self.audioFiles[index]
+        print "Playing " + currentSong
+        self.player = vlc.MediaPlayer(currentSong)
         self.player.play()
-        self.index += 1
-        if self.index >= self.numFiles:
-            self.index = 0
-            random.shuffle(self.audioFiles)
+
     def release(self):
         self.player.release()
     def stop(self):
@@ -46,23 +52,22 @@ class osPlayer(Player):
         self.p = subprocess
         self.pid = -1
         self.player = "play"
+
     def playRandom(self):
         FNULL = open(os.devnull, 'w')
-        currentSong = self.audioFiles[self.index]
+        index = self.getCurrentIndex()
+        currentSong = self.audioFiles[index]
         command = self.player + " " + currentSong 
         print "Playing " + currentSong 
         self.pid = self.p.Popen("exec " + command, stdout=FNULL,stderr=subprocess.STDOUT,shell=True)  
         #subprocess.call( ["play",self.audioFiles[self.index]], stdout=FNULL,stderr=subprocess.STDOUT)
-        self.index += 1
-        if self.index >= self.numFiles:
-            print "Reached the end of the files. Shuffling..."
-            self.index = 0
-            random.shuffle(self.audioFiles)
+
     def cleanUp(self):
         try:
             self.pid.terminate()
         except: 
             return
+
     def setPlayer(self,player):
         self.player = player
 
