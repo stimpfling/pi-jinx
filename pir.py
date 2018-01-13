@@ -6,8 +6,6 @@ import random
 import subprocess
 import os
 
-PIR_OUT_PIN = 11    # pin11
-random.seed(random.randint(0,420))
 class Player:
     def __init__(self,directory):
         fileExp = directory + "/*.mp3"
@@ -51,6 +49,7 @@ class osPlayer(Player):
         Player.__init__(self,directory)
         self.p = subprocess
         self.pid = -1
+        # By default use the sox "play" cmd. Can use cvlc as an alternative
         self.player = "play"
 
     def playRandom(self):
@@ -60,7 +59,6 @@ class osPlayer(Player):
         command = self.player + " " + currentSong 
         print "Playing " + currentSong 
         self.pid = self.p.Popen("exec " + command, stdout=FNULL,stderr=subprocess.STDOUT,shell=True)  
-        #subprocess.call( ["play",self.audioFiles[self.index]], stdout=FNULL,stderr=subprocess.STDOUT)
 
     def cleanUp(self):
         try:
@@ -71,7 +69,6 @@ class osPlayer(Player):
     def setPlayer(self,player):
         self.player = player
 
-p = osPlayer("./audio")
 
 def setup():
     GPIO.setmode(GPIO.BOARD)       # Numbers GPIOs by physical location
@@ -80,6 +77,13 @@ def setup():
 def destroy():
     p.cleanUp()
     GPIO.cleanup()                     # Release resource
+
+
+# Begin Script #
+
+PIR_OUT_PIN = 11    # pin11
+p = osPlayer("./audio")
+random.seed(random.randint(0,420))
 
 def loop():
     while True:
