@@ -49,7 +49,7 @@ class osPlayer(Player):
         Player.__init__(self,directory)
         self.p = subprocess
         self.pid = -1
-        # By default use the sox "play" cmd. Can use cvlc as an alternative
+        # By default use the sox "play" cmd. Can use cvlc/whatever you have installed 
         self.player = "play"
 
     def playRandom(self):
@@ -82,8 +82,12 @@ def destroy():
 # Begin Script #
 
 PIR_OUT_PIN = 11    # pin11
-p = osPlayer("./audio")
+
+# FIXME #
+# The playlist will be the same every time you start the program!
+# After one loop through the playlist, it starts to be more random.
 random.seed(random.randint(0,420))
+p = osPlayer("./audio")
 
 def loop():
     while True:
