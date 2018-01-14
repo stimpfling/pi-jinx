@@ -6,6 +6,15 @@ import random
 import subprocess
 import os
 
+# Some Global Variables 
+PIR_OUT_PIN = 11    # pin11
+
+# FIXME #
+# The playlist will be the same every time you start the program!
+# After one loop through the playlist, it starts to be more random.
+random.seed(random.randint(0,420))
+p = osPlayer("./audio")
+
 class Player:
     def __init__(self,directory):
         fileExp = directory + "/*.mp3"
@@ -80,14 +89,6 @@ def destroy():
 
 
 # Begin Script #
-
-PIR_OUT_PIN = 11    # pin11
-
-# FIXME #
-# The playlist will be the same every time you start the program!
-# After one loop through the playlist, it starts to be more random.
-random.seed(random.randint(0,420))
-p = osPlayer("./audio")
 
 def loop():
     while True:
