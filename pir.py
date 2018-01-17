@@ -83,7 +83,6 @@ def loop():
         if i == 0: 
             # Having this small sleep cuts down drastically on CPU time 
             time.sleep(.01)
-            pass
         elif i == 1:
             date = str(datetime.now()) 
             print 'Movement detected at ' + date
