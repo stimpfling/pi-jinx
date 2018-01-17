@@ -1,0 +1,20 @@
+These are the packages I installed to get sox "play" working:
+
+sudo apt-get install sox
+sudo apt-get install pulseaudio
+sudo apt-get install lame
+sudo apt-get install libsox-fmt-mp3
+
+If you want to use the command line "cvlc" player:
+
+sudo apt-get install vlc
+
+If you want to run python vlc:
+
+sudo pip install python-vlc
+
+I've found vlc is fairly unstable in Raspbian, it tends to trip up and spawn
+multiple players and doesn't exit gracefully. sox has been the better option.
+
+Note:
+You may need the lame encoder and/or pulseaudio for cvlc.
